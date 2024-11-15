@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <link rel="icon" href="img/logo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#16181D">
+    <meta name="description" content="الخادم الأول في الشرق الأوسط من حيث الجوده ولأول مره نقدم طريقة لعب جديده علي مستوى خوادم ام تي اي ادخل واستمتع معنا">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../cdn.jsdelivr.net/npm/bootstrap-icons%401.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="static/login.css">
+    <link rel="stylesheet" href="static/nav.css">
+    <style>
+                    #notification {
+                position: absolute;
+                right: 15px;
+                top:  20px;
+            }
+
+            #notification .Not {
+                width: auto;
+                height: 100px;
+                background-color: #16181d;
+                border-radius: 8px;
+                padding: 10px;
+
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 30px;
+                animation: Notf 3s ease-in-out;
+            }
+
+
+
+            #notification .Not .icon i {
+                font-size: 30px;
+                color: rgba(7, 73, 166, 0.818)
+            }
+
+            #notification .Not .progress {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 5px;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+                animation: Progressbar 3s ease-in-out;
+            }
+
+            @keyframes Progressbar {
+                from {
+                    width: 100%;
+                }
+
+                to {
+                    width: 0%;
+                }
+            }
+
+            #notification .Not .msg {
+                display: flex;
+                flex-direction: column;
+            }
+
+            #notification .Not .msg span {
+                font-size: 19px;
+            }
+
+
+            #notification .Not .msg p {
+                font-size: 15px;
+                color: rgba(7, 73, 166, 0.818)
+            }
+    </style>
+    <title>يو إلـجي تسجيل الدخول</title>
+</head>
+<body>
+
+    <script src="static/jquery.js"></script>
+    <div class="ulg">
+        <nav>
+    <div class="ulg-logo">
+        <img src="img/logo.png" alt="ULG">
+        <span>مدينة يوإلـ جي</span>
+    </div>
+    <ul class="urls">
+        
+            <li>
+                <a href="index.html">
+                    <span>
+                        الرئيسية                    </span>
+                </a>
+            </li>
+
+
+            <li>
+                <a href="Privacy_Statement.html">
+                    <span>
+                        الشروط والأحكام                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="https://discord.gg/ulg" target="_blank">
+                    <span>
+                        دخول الديسكورد الرئيسي                    </span>
+                </a>
+            </li>
+
+
+
+            <li class="menu">
+                <a>
+                    <span>
+                        حسابي الشخصي                    </span>
+                    <span><i class="bi bi-arrow-down-short"></i></span>
+
+                    <div class="desc">
+                        <a href="login.html">تسجيل دخول</a>
+                    </div>
+                </a>
+
+            </li>
+
+            </ul>
+
+</nav>
+        <section id="Authorize">
+
+            <div id="notification">
+
+            </div>
+
+            <div class="ulg-login">
+                <div class="login-heading">
+                    <span>تسجيل دخول</span>
+                </div>
+
+                <form id="Auth">
+                    <div class="login-data">
+                        <input type="text" name="username" placeholder="قم بإدخال اسم حسابك" id="username" required>
+                    </div>
+
+                    <div class="login-data">
+                        <input type="password" name="password" placeholder="قم بإدخال كود الدخول من F5" id="password" required>
+                    </div>
+
+                    <div class="auth-btn">
+                        <button class="btn" id="login-btn">تسجيل دخول</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        $("#Auth").submit((e) => {
+            e.preventDefault();
+            
+            let username = $("#username").val();
+            let password = $("#password").val();
+
+            $.ajax({
+            url: "functions",
+            method: "POST",
+            data: {
+                login: true,
+                username: username,
+                password: password
+            },
+            success: function (res) {
+                console.log(res)
+                if(res.Success) {
+                    toast("Success",res.msg)
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                }else if (res.error) {
+                    toast("Error",res.msg)
+                }else {
+                    discord("login", res)
+                }
+            }})
+        })
+
+        function discord(type, message) {
+            $.ajax({
+                url: "functions",
+                method: "POST",
+                data: {
+                    DiscordMsg: true,
+                    type: type,
+                    content: message
+                },
+            });
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        function toast(type, text) {
+            if (type == "Error") {
+                icon  = "ban";
+                color = "#f50e0e";
+            } else if (type == "Info") {
+                icon  = "info-circle";
+                color = "#cbf50e";
+            } else if (type == "Success") {
+                icon  = "check-circle-fill";
+                color = "#1067af";
+            }
+            var toast = `
+                <div class="Not">
+                    <div class="icon">
+                        <i class="bi bi-${icon}"></i>
+                    </div>
+                    <div class="msg">
+                        <span>
+                            ${capitalizeFirstLetter(type)}
+                        </span>
+                        <p>
+                            ${text}
+                        </p>
+                    </div>
+                    <div class="progress" style='background-color: ${color}'></div>
+                </div>
+            `;
+
+
+            $("#notification").html(toast);
+
+            setTimeout(() => {
+                $("#notification").html(" ");
+            }, 3000);
+        }
+        </script>
+</body>
+
+
+</html>
